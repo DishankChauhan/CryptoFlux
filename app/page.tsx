@@ -5,26 +5,31 @@ import { Button } from '@/components/ui/button';
 import { ArrowRight } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
-// Dynamically import Spline to ensure it only runs on the client side
-const Spline = dynamic(() => import('@splinetool/react-spline'), { ssr: false });
+// Dynamically import Spline with proper client-side handling
+const Spline = dynamic(
+  () => import('@splinetool/react-spline'),
+  { 
+    ssr: false,
+    loading: () => <div className="absolute inset-0 bg-[#0A1A2F]" />
+  }
+);
 
 export default function Home() {
   const [navbarScrolled, setNavbarScrolled] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const handleScroll = () => {
-        if (window.scrollY > 50) {
-          setNavbarScrolled(true);
-        } else {
-          setNavbarScrolled(false);
-        }
-      };
-
-      window.addEventListener('scroll', handleScroll);
-      return () => window.removeEventListener('scroll', handleScroll);
-    }
+    setIsMounted(true); // Track client-side mount state
+    const handleScroll = () => {
+      setNavbarScrolled(window.scrollY > 50);
+    };
+    
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  // Prevent hydration mismatch
+  if (!isMounted) return null;
 
   return (
     <div className="min-h-screen bg-[#0A1A2F] text-white overflow-hidden">
@@ -47,7 +52,7 @@ export default function Home() {
             <Link href="/login">
               <Button
                 variant="ghost"
-                className="rounded-full px-6 py-2 text-black hover:bg-white/10 transition-colors border border-white/20 hover:border-[#6C5CE7]/50"
+                className="rounded-full px-6 py-2 text-white hover:bg-white/10 transition-colors border border-white/20 hover:border-[#6C5CE7]/50"
               >
                 Login
               </Button>
@@ -65,9 +70,11 @@ export default function Home() {
 
       {/* Hero Section with Spline */}
       <div className="relative h-screen">
-        <div className="absolute inset-0">
-          <Spline scene="https://prod.spline.design/T9W30K5DiqkwYAJn/scene.splinecode" />
-        </div>
+        {isMounted && (
+          <div className="absolute inset-0">
+            <Spline scene="https://prod.spline.design/T9W30K5DiqkwYAJn/scene.splinecode" />
+          </div>
+        )}
 
         {/* Buttons Positioned to the Left */}
         <div className="absolute inset-0 flex items-end justify-start pb-32 pl-8">
@@ -84,7 +91,7 @@ export default function Home() {
               <Button
                 size="lg"
                 variant="outline"
-                className="rounded-full w-full sm:w-auto border-white/20 hover:bg-white/10 text-black hover:text-black"
+                className="rounded-full w-full sm:w-auto border-white/20 hover:bg-white/10 text-white hover:text-white"
               >
                 View Documentation
               </Button>
