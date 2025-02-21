@@ -1,39 +1,45 @@
-"use client"
+'use client';
+
 import Link from 'next/link';
 import dynamic from 'next/dynamic';
 import { Button } from '@/components/ui/button';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, Star, Check, Twitter, Linkedin } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
-// Dynamically import Spline with proper client-side handling
-const Spline = dynamic(
-  () => import('@splinetool/react-spline'),
-  { 
-    ssr: false,
-    loading: () => <div className="absolute inset-0 bg-[#0A1A2F]" />
-  }
-);
+const Spline = dynamic(() => import('@splinetool/react-spline'), {
+  ssr: false,
+  loading: () => (
+    <div className="absolute inset-0 bg-[#0A1A2F] flex items-center justify-center">
+      <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-[#00F5E9]"></div>
+    </div>
+  )
+});
 
 export default function Home() {
   const [navbarScrolled, setNavbarScrolled] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
-    setIsMounted(true); // Track client-side mount state
+    setIsMounted(true);
     const handleScroll = () => {
       setNavbarScrolled(window.scrollY > 50);
     };
-    
+
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Prevent hydration mismatch
-  if (!isMounted) return null;
+  if (!isMounted) {
+    return (
+      <div className="min-h-screen bg-[#0A1A2F] flex items-center justify-center">
+        <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-[#00F5E9]"></div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-[#0A1A2F] text-white overflow-hidden">
-      {/* Navbar with Scroll Effect */}
+      {/* Navbar */}
       <nav
         className={`fixed top-0 w-full z-50 transition-all duration-300 ${
           navbarScrolled
@@ -42,17 +48,14 @@ export default function Home() {
         }`}
       >
         <div className="container mx-auto px-4 h-20 flex justify-between items-center">
-          {/* Logo with gradient text */}
           <Link href="/" className="text-2xl font-bold bg-gradient-to-r from-[#6C5CE7] to-[#00F5E9] text-transparent bg-clip-text">
             CryptoFlux
           </Link>
-
-          {/* Navigation Buttons */}
           <div className="flex items-center space-x-4">
             <Link href="/login">
               <Button
-                variant="ghost"
-                className="rounded-full px-6 py-2 text-white hover:bg-white/10 transition-colors border border-white/20 hover:border-[#6C5CE7]/50"
+                variant="outline"
+                className="rounded-full px-6 py-2 bg-white text-black hover:bg-gray-100 border-none"
               >
                 Login
               </Button>
@@ -68,34 +71,27 @@ export default function Home() {
         </div>
       </nav>
 
-      {/* Hero Section with Spline */}
+      {/* Hero Section */}
       <div className="relative h-screen">
-        {isMounted && (
-          <div className="absolute inset-0">
-            <Spline scene="https://prod.spline.design/T9W30K5DiqkwYAJn/scene.splinecode" />
-          </div>
-        )}
+        <div className="absolute inset-0">
+          <Spline scene="https://prod.spline.design/T9W30K5DiqkwYAJn/scene.splinecode" />
+        </div>
+        <div className="absolute inset-0 flex flex-col items-start justify-start">
+          <div className="max-w-2xl mx-8 mt-32 z-10 space-y-8">
+            {/* Heading */}
+            <h1 className="text-4xl md:text-6xl font-bold bg-gradient-to-r from-white via-[#6C5CE7] to-[#00F5E9] text-transparent bg-clip-text">
+              
+            </h1>
 
-        {/* Buttons Positioned to the Left */}
-        <div className="absolute inset-0 flex items-end justify-start pb-32 pl-8">
-          <div className="flex flex-col sm:flex-row justify-start gap-4">
-            <Link href="/signup">
-              <Button
-                size="lg"
-                className="rounded-full w-full sm:w-auto bg-gradient-to-r from-[#6C5CE7] to-[#00F5E9] hover:opacity-90 transition-opacity"
-              >
-                Get Started Free <ArrowRight className="ml-2" />
-              </Button>
-            </Link>
-            <Link href="/docs">
-              <Button
-                size="lg"
-                variant="outline"
-                className="rounded-full w-full sm:w-auto border-white/20 hover:bg-white/10 text-white hover:text-white"
-              >
-                View Documentation
-              </Button>
-            </Link>
+            {/* Buttons Container */}
+            <div className="flex flex-col sm:flex-row gap-4">
+              <Link href="/signup">
+                
+              </Link>
+              <Link href="/docs">
+                
+              </Link>
+            </div>
           </div>
         </div>
       </div>
@@ -120,92 +116,95 @@ export default function Home() {
         </div>
       </div>
 
-      {/* Footer Section */}
-      <footer className="bg-[#0A1A2F] border-t border-white/10 py-12">
+      {/* Testimonials Section */}
+      <div className="py-20 bg-[#0A1A2F] border-t border-white/10">
         <div className="container mx-auto px-4">
-          <div className="grid md:grid-cols-4 gap-8">
-            {/* Column 1: About */}
-            <div>
-              <h3 className="text-lg font-semibold mb-4">About CryptoFlux</h3>
-              <p className="text-gray-400">
-                CryptoFlux is a leading platform for Web3 payments, enabling businesses to accept cryptocurrencies and unlock global commerce.
-              </p>
-            </div>
-
-            {/* Column 2: Quick Links */}
-            <div>
-              <h3 className="text-lg font-semibold mb-4">Quick Links</h3>
-              <ul className="space-y-2">
-                <li>
-                  <Link href="/docs" className="text-gray-400 hover:text-[#00F5E9] transition-colors">
-                    Documentation
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/pricing" className="text-gray-400 hover:text-[#00F5E9] transition-colors">
-                    Pricing
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/blog" className="text-gray-400 hover:text-[#00F5E9] transition-colors">
-                    Blog
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/contact" className="text-gray-400 hover:text-[#00F5E9] transition-colors">
-                    Contact Us
-                  </Link>
-                </li>
-              </ul>
-            </div>
-
-            {/* Column 3: Social Media */}
-            <div>
-              <h3 className="text-lg font-semibold mb-4">Follow Us</h3>
-              <ul className="space-y-2">
-                <li>
-                  <Link href="https://twitter.com" className="text-gray-400 hover:text-[#00F5E9] transition-colors">
-                    Twitter
-                  </Link>
-                </li>
-                <li>
-                  <Link href="https://linkedin.com" className="text-gray-400 hover:text-[#00F5E9] transition-colors">
-                    LinkedIn
-                  </Link>
-                </li>
-                <li>
-                  <Link href="https://github.com" className="text-gray-400 hover:text-[#00F5E9] transition-colors">
-                    GitHub
-                  </Link>
-                </li>
-              </ul>
-            </div>
-
-            {/* Column 4: Newsletter */}
-            <div>
-              <h3 className="text-lg font-semibold mb-4">Subscribe</h3>
+          <h2 className="text-3xl md:text-4xl font-bold text-center mb-12 bg-gradient-to-r from-[#6C5CE7] to-[#00F5E9] text-transparent bg-clip-text">
+            What Our Users Say
+          </h2>
+          <div className="grid md:grid-cols-3 gap-8">
+            <div className="p-6 rounded-xl bg-gradient-to-b from-white/[0.08] to-transparent border border-white/10 hover:border-[#6C5CE7]/50 transition-all duration-300">
+              <div className="flex items-center space-x-2 mb-4">
+                <Star className="text-[#00F5E9]" />
+                <Star className="text-[#00F5E9]" />
+                <Star className="text-[#00F5E9]" />
+                <Star className="text-[#00F5E9]" />
+                <Star className="text-[#00F5E9]" />
+              </div>
               <p className="text-gray-400 mb-4">
-                Stay updated with the latest news and features from CryptoFlux.
+                "CryptoFlux has revolutionized how we handle payments. The multi-currency support is a game-changer!"
               </p>
-              <form className="flex gap-2">
-                <input
-                  type="email"
-                  placeholder="Your email"
-                  className="w-full px-4 py-2 rounded-full bg-white/10 border border-white/20 text-white placeholder-gray-400 focus:outline-none focus:border-[#00F5E9]"
-                />
-                <Button
-                  type="submit"
-                  className="rounded-full bg-gradient-to-r from-[#6C5CE7] to-[#00F5E9] hover:opacity-90 transition-opacity"
-                >
-                  Subscribe
-                </Button>
-              </form>
+              <p className="text-gray-300 font-semibold">— John Doe, CEO of Web3Pay</p>
+            </div>
+            <div className="p-6 rounded-xl bg-gradient-to-b from-white/[0.08] to-transparent border border-white/10 hover:border-[#6C5CE7]/50 transition-all duration-300">
+              <div className="flex items-center space-x-2 mb-4">
+                <Star className="text-[#00F5E9]" />
+                <Star className="text-[#00F5E9]" />
+                <Star className="text-[#00F5E9]" />
+                <Star className="text-[#00F5E9]" />
+                <Star className="text-[#00F5E9]" />
+              </div>
+              <p className="text-gray-400 mb-4">
+                "The API is so easy to integrate. We had it up and running in under an hour!"
+              </p>
+              <p className="text-gray-300 font-semibold">— Jane Smith, CTO of BlockTech</p>
+            </div>
+            <div className="p-6 rounded-xl bg-gradient-to-b from-white/[0.08] to-transparent border border-white/10 hover:border-[#6C5CE7]/50 transition-all duration-300">
+              <div className="flex items-center space-x-2 mb-4">
+                <Star className="text-[#00F5E9]" />
+                <Star className="text-[#00F5E9]" />
+                <Star className="text-[#00F5E9]" />
+                <Star className="text-[#00F5E9]" />
+                <Star className="text-[#00F5E9]" />
+              </div>
+              <p className="text-gray-400 mb-4">
+                "Instant settlement has saved us so much time. Highly recommend CryptoFlux!"
+              </p>
+              <p className="text-gray-300 font-semibold">— Alex Johnson, Founder of ChainPay</p>
             </div>
           </div>
+        </div>
+      </div>
 
-          {/* Footer Bottom */}
-          <div className="border-t border-white/10 mt-8 pt-8 text-center text-gray-400">
-            <p>© 2023 CryptoFlux. All rights reserved.</p>
+      {/* Call-to-Action Section */}
+      <div className="py-20 bg-gradient-to-r from-[#6C5CE7] to-[#00F5E9]">
+        <div className="container mx-auto px-4 text-center">
+          <h2 className="text-3xl md:text-4xl font-bold mb-6">Ready to Get Started?</h2>
+          <p className="text-xl md:text-2xl text-gray-200 mb-8">
+            Join thousands of businesses already using CryptoFlux to power their payments.
+          </p>
+          <Link href="/signup">
+            <Button
+              size="lg"
+              className="rounded-full bg-white text-black hover:bg-gray-100 transition-colors"
+            >
+              Sign Up Now <ArrowRight className="ml-2" />
+            </Button>
+          </Link>
+        </div>
+      </div>
+
+      {/* Footer */}
+      <footer className="py-10 bg-[#0A1A2F] border-t border-white/10">
+        <div className="container mx-auto px-4">
+          <div className="flex flex-col md:flex-row justify-between items-center space-y-6 md:space-y-0">
+            <div className="text-2xl font-bold bg-gradient-to-r from-[#6C5CE7] to-[#00F5E9] text-transparent bg-clip-text">
+              CryptoFlux
+            </div>
+            <div className="flex space-x-6">
+              <Link href="https://twitter.com" className="text-gray-400 hover:text-[#00F5E9]">
+                <Twitter />
+              </Link>
+              <Link href="https://github.com" className="text-gray-400 hover:text-[#00F5E9]">
+                
+              </Link>
+              <Link href="https://linkedin.com" className="text-gray-400 hover:text-[#00F5E9]">
+                <Linkedin />
+              </Link>
+            </div>
+          </div>
+          <div className="text-center text-gray-400 mt-6">
+            &copy; {new Date().getFullYear()} CryptoFlux. All rights reserved.
           </div>
         </div>
       </footer>

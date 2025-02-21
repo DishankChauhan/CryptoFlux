@@ -4,9 +4,6 @@ const nextConfig = {
     ignoreDuringBuilds: true,
   },
   images: { unoptimized: true },
-  experimental: {
-    optimizeFonts: false,
-  },
   webpack: (config) => {
     config.module.rules.push({
       test: /\.js$/,
@@ -20,7 +17,8 @@ const nextConfig = {
       }
     });
     return config;
-  }
+  },
+  transpilePackages: ['@splinetool/react-spline', '@splinetool/runtime']
 };
 
 module.exports = nextConfig;
